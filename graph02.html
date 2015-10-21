@@ -71,7 +71,7 @@ body {
 <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
 <script>
 /********************Loading the JSON Data Once***********************/
-var yourUrl = "/SanLeandroRepository/getHourdata.json";
+var yourUrl = "http://berkeleygamelab.github.io/SanLeandroRepository/graph02.html";
 function Get(yourUrl){
 var Httpreq = new XMLHttpRequest(); // a new request
 Httpreq.open("GET",yourUrl,false);
@@ -108,7 +108,7 @@ var tip = d3.tip()
   .attr('class', 'd3-tip')
   .offset([-10, 0])
   .html(function(d) {
-    return "<strong>People that Walked by:</strong> <span style='color:#F88DEB'>" + d.points + "</span>";
+    return "<strong>People that Walked by:</strong> <span style='color:#F88DEB'>" + d.freq + "</span>";
   })
 
 var svg = d3.select("body").append("svg")
@@ -119,10 +119,10 @@ var svg = d3.select("body").append("svg")
 
 svg.call(tip);
 
-var data = json_obj.map( function(d){return {hour: d.hour, points: d.points}});
+var data = json_obj.map( function(d){return {time: d.time, points: d.freq}});
 
 
-  x.domain(data.map(function(d) { return d.hour; }));
+  x.domain(data.map(function(d) { return d.time; }));
   y.domain([0, d3.max(data, function(d) { return d.points; })]);
 
 console.log(d3.max(data, function (d) {return d.points}));
@@ -146,7 +146,7 @@ console.log(d3.max(data, function (d) {return d.points}));
       .data(data)
     .enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function(d) { return x(d.hour); })
+      .attr("x", function(d) { return x(d.time); })
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.points); })
       .attr("height", function(d) { return height - y(d.points); })
