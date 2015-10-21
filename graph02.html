@@ -88,7 +88,8 @@ var margin = {top: 50, right: 50, bottom: 50, left: 50},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-
+var parseDate = d3.time.format("%Y-%m-%d %H:%M:%S").parse;
+var formatDate = d3.time.format("%m/%d/%y %H:%M");
 
 var x = d3.scale.ordinal()
     .rangeRoundBands([0, width], .1);
@@ -119,7 +120,7 @@ var svg = d3.select("body").append("svg")
 
 svg.call(tip);
 
-var data = json_obj.map( function(d){return {time: d.time, freq: d.freq}});
+var data = json_obj.map( function(d){return {time: parseDate(d.time), freq: d.freq}});
 
 
   x.domain(data.map(function(d) { return d.time; }));
