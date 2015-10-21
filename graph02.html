@@ -119,13 +119,13 @@ var svg = d3.select("body").append("svg")
 
 svg.call(tip);
 
-var data = json_obj.map( function(d){return {time: d.time, points: d.freq}});
+var data = json_obj.map( function(d){return {time: d.time, freq: d.freq}});
 
 
   x.domain(data.map(function(d) { return d.time; }));
-  y.domain([0, d3.max(data, function(d) { return d.points; })]);
+  y.domain([0, d3.max(data, function(d) { return d.freq; })]);
 
-console.log(d3.max(data, function (d) {return d.points}));
+console.log(d3.max(data, function (d) {return d.freq}));
 
   svg.append("g")
       .attr("class", "x axis")
@@ -148,16 +148,13 @@ console.log(d3.max(data, function (d) {return d.points}));
       .attr("class", "bar")
       .attr("x", function(d) { return x(d.time); })
       .attr("width", x.rangeBand())
-      .attr("y", function(d) { return y(d.points); })
-      .attr("height", function(d) { return height - y(d.points); })
+      .attr("y", function(d) { return y(d.freq); })
+      .attr("height", function(d) { return height - y(d.freq); })
       .on('mouseover', tip.show)
       .on('mouseout', tip.hide)
 
 
 
-/*function type(d) {
-  d.point = +d.point;
-  return d;
-}*/
+
 
 </script>
