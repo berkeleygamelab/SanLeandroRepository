@@ -120,7 +120,7 @@ var svg = d3.select("body").append("svg")
 
 svg.call(tip);
 
-var data = json_obj.map(function(d) {return time: d.time, freq: d.freq}});
+var data = json_obj.map( function(d){return {time: d.time, freq: d.freq}});
 
 
   x.domain(data.map(function(d) { return d.time; }));
