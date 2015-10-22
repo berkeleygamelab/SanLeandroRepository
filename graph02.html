@@ -71,7 +71,7 @@ body {
 <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
 <script>
 /********************Loading the JSON Data Once***********************/
-var yourUrl = "/SanLeandroRepository/getData.json";
+var yourUrl = "/SanLeandroRepository/getHourdata.json";
 function Get(yourUrl){
 var Httpreq = new XMLHttpRequest(); // a new request
 Httpreq.open("GET",yourUrl,false);
@@ -109,7 +109,7 @@ var tip = d3.tip()
   .attr('class', 'd3-tip')
   .offset([-10, 0])
   .html(function(d) {
-    return "<strong>People that Walked by:</strong> <span style='color:#F88DEB'>" + d.freq + "</span>";
+    return "<strong>People that Walked by:</strong> <span style='color:#F88DEB'>" + d.points + "</span>";
   })
 
 var svg = d3.select("body").append("svg")
@@ -120,7 +120,7 @@ var svg = d3.select("body").append("svg")
 
 svg.call(tip);
 
-var data = json_obj.map( function(d){return {time: parseDate(d.time), freq: d.freq}});
+var data = json_obj.map( function(d){return {time: parseDate(d.hour), freq: d.points}});
 
 
   x.domain(data.map(function(d) { return d.time; }));
