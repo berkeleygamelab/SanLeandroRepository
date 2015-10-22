@@ -120,13 +120,13 @@ var svg = d3.select("body").append("svg")
 
 svg.call(tip);
 
-var data = json_obj.map( function(d){return {time: d.hour, freq: d.points}});
+var data = json_obj.map( function(d){return hour: d.hour, points: d.points}});
 
 
-  x.domain(data.map(function(d) { return d.time; }));
-  y.domain([0, d3.max(data, function(d) { return d.freq; })]);
+  x.domain(data.map(function(d) { return d.hour; }));
+  y.domain([0, d3.max(data, function(d) { return d.points; })]);
 
-console.log(d3.max(data, function (d) {return d.freq}));
+console.log(d3.max(data, function (d) {return d.points}));
 
   svg.append("g")
       .attr("class", "x axis")
@@ -147,10 +147,10 @@ console.log(d3.max(data, function (d) {return d.freq}));
       .data(data)
     .enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function(d) { return x(d.time); })
+      .attr("x", function(d) { return x(d.hour); })
       .attr("width", x.rangeBand())
-      .attr("y", function(d) { return y(d.freq); })
-      .attr("height", function(d) { return height - y(d.freq); })
+      .attr("y", function(d) { return y(d.points); })
+      .attr("height", function(d) { return height - y(d.points); })
       .on('mouseover', tip.show)
       .on('mouseout', tip.hide)
 
