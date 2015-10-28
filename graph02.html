@@ -143,7 +143,7 @@ console.log(d3.max(data, function (d) {return d.freq}));
       .style("text-anchor", "end")
       .text("Number of Actions in Total");
 
-  svg.selectAll(".bar")
+/*  svg.selectAll(".bar")
       .data(data)
     .enter().append("rect")
       .attr("class", "bar")
@@ -152,7 +152,7 @@ console.log(d3.max(data, function (d) {return d.freq}));
       .attr("y", function(d) { return y(d.freq); })
       .attr("height", function(d) { return height - y(d.freq); })
       .on('mouseover', tip.show)
-      .on('mouseout', tip.hide);
+      .on('mouseout', tip.hide);*/
 
 
 
