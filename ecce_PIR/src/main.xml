@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<program xmlns="http://www.kinoma.com/kpr/1">
+
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!-- ASSETS -->
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	
+	<skin id="MainSkin" color="white"/>
+
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!-- STYLES -->
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ -->			
+  	
+	<style id="ButtonStyle" color="black" 
+		font="bold 50px"/>
+		
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!-- HANDLERS -->
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ -->			
+  
+  	<handler path="/gotButtonResult">
+    	<behavior>
+            <method id="onInvoke" params="handler, message"><![CDATA[   
+            	/* This handler recieves repeated messages from the read 
+            	   method defined in the bll (button.js). Use the return
+            	   message's requestObject to access the read result. */             
+                 var readResult = message.requestObject;            
+                 if ( readResult == true ) {               
+                    application.distribute( "somebody" );
+                    trace ("from /gotButtonResult: pin_hi "+readResult+"\n");
+                    }
+                 if ( readResult == false )	{
+                 	application.distribute( "nobody" );
+                 	trace ("from /gotButtonResult: pin_lo "+readResult+"\n");
+                 } 
+            ]]></method>
+        </behavior>      
+    </handler>
+  
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!-- LAYOUTS -->
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
+
+    <container id="MainContainer" top="0" left="0" bottom="0" right="0" 
+    	skin="MainSkin">
+        <label top="0" left="0" bottom="0" right="0" 
+            	string="'Cuenta Me'" style="ButtonStyle"/>         	
+        <behavior>
+            <method id="somebody" params="container"><![CDATA[
+                //When button clicked, change text
+                curString = container.first.string;
+                container.first.string = "Hola!"    
+            ]]></method>
+            
+            <method id="nobody" params="container"><![CDATA[
+                //When button clicked, change text
+                curString = container.first.string;
+                container.first.string = "Adios!"
+            ]]></method>
+        </behavior>            
+    </container>
+    
+    <script><![CDATA[		
+	    /* Create message for communication with hardware pins.
+    	   button: name of pins object, will use later for calling 'button' methods.
+    	   require: name of js or xml bll file.
+    	   pins: initializes 'button' (matches 'button' object in the bll)
+    	  	   	 with the given pin numbers. Pin types and directions
+    	  		 are set within the bll.	*/
+		application.invoke( new MessageWithObject( "pins:configure", {
+        	button: {
+                require: "button",
+                pins: {
+                	ground: {pin: 51, type: "Ground"},
+                	power: {pin: 52, voltage: 3.3, type: "Power"},
+        			button: { pin: 53 }              
+                }
+            }
+        }));
+    	
+    	/* Use the initialized button object and repeatedly 
+    	   call its read method with a given interval.  */
+    	application.invoke( new MessageWithObject( "pins:/button/wasPressed?" + 
+            serializeQuery( {       
+				repeat: "on",
+				interval: 20,
+				callback: "/gotButtonResult"
+        })));        
+    
+		/* Start application */   			
+        application.add( new MainContainer() );       
+    ]]></script>
+</program>
