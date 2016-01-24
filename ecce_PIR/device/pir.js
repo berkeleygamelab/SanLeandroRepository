@@ -16,34 +16,32 @@
 */
 
 exports.pins = {
-    ground: { type: "Digital", direction: "output", value : 0 },
-    power: { type: "Digital", direction: "output", value : 1 }, 
-    button: { type: "Digital", direction: "input" }
+    PIRinput: { type: "Digital", direction: "input" }
 };
 
 
 exports.configure = function() {
-	this.button.init();
+	this.PIRinput.init();
 	this.state = -1;
 }
 
 exports.read = function() {
-	this.state = this.button.read();
+	this.state = this.PIRinput.read();
 	return this.state;
 }
 
 exports.wasPressed = function() {
 	var formerState = this.state;
-	this.state = this.button.read();
-	return this.state;
+	this.state = this.PIRinput.read();
+	if (formerState != this.state) return this.state;
 }
 
 exports.wasReleased = function() {
 	var formerState = this.state;
-	this.state = this.button.read();
+	this.state = this.PIRinput.read();
 	return ((formerState == 1) && (this.state == 0))
 }
 
 exports.close = function() {
-	this.button.close();
+	this.PIRinput.close();
 }

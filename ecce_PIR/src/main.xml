@@ -17,29 +17,6 @@
 		font="bold 50px"/>
 		
 <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-<!-- HANDLERS -->
-<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ -->			
-  
-  	<handler path="/gotButtonResult">
-    	<behavior>
-            <method id="onInvoke" params="handler, message"><![CDATA[   
-            	/* This handler recieves repeated messages from the read 
-            	   method defined in the bll (button.js). Use the return
-            	   message's requestObject to access the read result. */             
-                 var readResult = message.requestObject;            
-                 if ( readResult == true ) {               
-                    application.distribute( "somebody" );
-                    trace ("from /gotButtonResult: pin_hi "+readResult+"\n");
-                    }
-                 if ( readResult == false )	{
-                 	application.distribute( "nobody" );
-                 	trace ("from /gotButtonResult: pin_lo "+readResult+"\n");
-                 } 
-            ]]></method>
-        </behavior>      
-    </handler>
-  
-<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 <!-- LAYOUTS -->
 <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
 
@@ -59,36 +36,48 @@
                 curString = container.first.string;
                 container.first.string = "Adios!"
             ]]></method>
+            
+            <method id="onSensorConfigured" params="container"><![CDATA[
+            	//Once the sensor has been configured, start reading from it.
+            	Pins.repeat("/pir/wasPressed", 20, function(readResult){
+				 if ( readResult == true ) {               
+				    application.distribute( "somebody" );
+				    trace ("from /gotButtonResult: pin_hi "+readResult+"\n");
+				    }
+				 if ( readResult == false )	{
+				 	application.distribute( "nobody" );
+				 	trace ("from /gotButtonResult: pin_lo "+readResult+"\n");
+				 } 
+    			});
+            ]]></method>
         </behavior>            
     </container>
     
-    <script><![CDATA[		
+    <script><![CDATA[
+    	Pins = require("pins");
+    		
 	    /* Create message for communication with hardware pins.
     	   button: name of pins object, will use later for calling 'button' methods.
     	   require: name of js or xml bll file.
     	   pins: initializes 'button' (matches 'button' object in the bll)
     	  	   	 with the given pin numbers. Pin types and directions
     	  		 are set within the bll.	*/
-		application.invoke( new MessageWithObject( "pins:configure", {
-        	button: {
-                require: "button",
-                pins: {
+    	  		 
+    	Pins.configure({
+    		pir: {
+    			require: "pir",
+		        pins: {
                 	ground: {pin: 51, type: "Ground"},
                 	power: {pin: 52, voltage: 3.3, type: "Power"},
-        			button: { pin: 53 }              
+        			PIRinput: { pin: 53 }              
                 }
             }
-        }));
-    	
-    	/* Use the initialized button object and repeatedly 
-    	   call its read method with a given interval.  */
-    	application.invoke( new MessageWithObject( "pins:/button/wasPressed?" + 
-            serializeQuery( {       
-				repeat: "on",
-				interval: 20,
-				callback: "/gotButtonResult"
-        })));        
-    
+        }, function(success){
+        	trace("Pins configuration " + (success ? "was " : "WAS NOT ") + "successful.\n");
+        	//tell the rest of the application that the sensor configuration is done
+        	if (success) application.distribute("onSensorConfigured");
+        });
+        
 		/* Start application */   			
         application.add( new MainContainer() );       
     ]]></script>
