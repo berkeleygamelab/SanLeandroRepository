@@ -12,12 +12,16 @@ class MainContainerBehavior extends Behavior {
 	somebody(container){
 		//When button clicked, change text
 		let curString = container.first.string;
-		container.first.string = "Hola!"
+		container.first.string = "Hola!";
+//		Pins.write({color: "red", value: .5});
+		//Pins.invoke("/led/write", { color: "red", value: .5} );
 	}
 	nobody(container){
 		//When button clicked, change text
         let curString = container.first.string;
-        container.first.string = "Adios!"
+        container.first.string = "Adios!";
+//		Pins.write({color: "red", value: 0})
+		//Pins.invoke( "/led/write", { color: "red", value: 0} );
 	}
 	onSensorConfigured(container){
 		//Once the sensor has been configured, start reading from it.
@@ -52,11 +56,21 @@ let MainContainer = Container.template($ => ({
 Pins.configure({
 	pir: {
 		require: "pir",
+		
         pins: {
-        	ground: {pin: 51, type: "Ground"},
-        	power: {pin: 52, voltage: 3.3, type: "Power"},
+        	ground: { pin: 51, type: "Ground"},
+        	power: { pin: 52, voltage: 3.3, type: "Power"},
 			PIRinput: { pin: 53 }
         }
+    },
+    led: {
+    	require: "led",
+	  	pins: { 
+		  	red: { pin: 28 },
+		    green: { pin: 30 },
+	        blue: { pin: 34 }, 
+	        anode: { pin: 24 }
+        }    	
     }
 }, function(success){
 	trace("Pins configuration " + (success ? "was " : "WAS NOT ") + "successful.\n");
