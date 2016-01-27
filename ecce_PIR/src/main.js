@@ -13,15 +13,13 @@ class MainContainerBehavior extends Behavior {
 		//When button clicked, change text
 		let curString = container.first.string;
 		container.first.string = "Hola!";
-//		Pins.write({color: "red", value: .5});
-		//Pins.invoke("/led/write", { color: "red", value: .5} );
+		Pins.invoke("/led/write", { color: "red", value: 1 } );
 	}
 	nobody(container){
 		//When button clicked, change text
         let curString = container.first.string;
         container.first.string = "Adios!";
-//		Pins.write({color: "red", value: 0})
-		//Pins.invoke( "/led/write", { color: "red", value: 0} );
+		Pins.invoke( "/led/write", { color: "red", value: 0} );
 	}
 	onSensorConfigured(container){
 		//Once the sensor has been configured, start reading from it.
