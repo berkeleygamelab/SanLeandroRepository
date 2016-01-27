@@ -13,13 +13,21 @@ class MainContainerBehavior extends Behavior {
 		//When button clicked, change text
 		let curString = container.first.string;
 		container.first.string = "Hola!";
-		Pins.invoke("/led/write", { color: "red", value: 1 } );
+//		Pins.invoke("/led/write", { color: "red", value: 1 } );
+		for (var i = 0 ; i < discoveredDevices.length; i++) {
+			discoveredDevices[i].invoke("/ledpir/write", { color: color, value: 1 }, function(result) {});
+		}
+		Pins.invoke("/ledpir/write", { color: "red", value: 1} );
 	}
 	nobody(container){
 		//When button clicked, change text
         let curString = container.first.string;
         container.first.string = "Adios!";
-		Pins.invoke( "/led/write", { color: "red", value: 0} );
+//		Pins.invoke( "/led/write", { color: "red", value: 0} );
+		for (var i = 0 ; i < discoveredDevices.length; i++) {
+			discoveredDevices[i].invoke("/ledpir/write", { color: color, value: 0 }, function(result) {});
+		}
+		Pins.invoke( "/ledpir/write", { color: "red", value: 0} );
 	}
 	onSensorConfigured(container){
 		//Once the sensor has been configured, start reading from it.
@@ -73,8 +81,29 @@ Pins.configure({
 }, function(success){
 	trace("Pins configuration " + (success ? "was " : "WAS NOT ") + "successful.\n");
 	//tell the rest of the application that the sensor configuration is done
-	if (success) application.distribute("onSensorConfigured");
+	if (success){
+		application.distribute("onSensorConfigured");
+		trace("configured pins\n");
+		sharedPins = Pins.share("ws", {zeroconf: true, name: "tricolor-led"});
+	}	
 });
 
 /* Start application */
-application.add( new MainContainer() );
+//application.add( new MainContainer() );
+application.behavior = Behavior({
+	onLaunch(application) {
+		var mainContainer = new MainContainer();
+		application.add( mainContainer );	
+		
+		Pins.discover(
+			function(connectionDesc) {
+				trace("Found: " + JSON.stringify(connectionDesc) + "\n");
+				if (connectionDesc.name == "tricolor-led") discoveredDevices[discoveredDevices.length] = Pins.connect(connectionDesc);
+			}, function(result) {
+				trace("Lost: "+JSON.stringify(result)+"\n");
+				let index = discoveredDevices.indexOf(result);
+				if (index >= 0) discoveredDevices.splice(index, 1);
+			}
+		);
+	}
+});
