@@ -1,5 +1,6 @@
 //@program
 
+var discoveredDevices = [];
 Pins = require("pins");
 
 /* Skins & Styles */
@@ -15,9 +16,9 @@ class MainContainerBehavior extends Behavior {
 		container.first.string = "Hola!";
 //		Pins.invoke("/led/write", { color: "red", value: 1 } );
 		for (var i = 0 ; i < discoveredDevices.length; i++) {
-			discoveredDevices[i].invoke("/ledpir/write", { color: color, value: 1 }, function(result) {});
+			discoveredDevices[i].invoke("/led/write", { color: "red", value: 1 }, function(result) {});
 		}
-		Pins.invoke("/ledpir/write", { color: "red", value: 1} );
+		Pins.invoke("/led/write", { color: "red", value: 1} );
 	}
 	nobody(container){
 		//When button clicked, change text
@@ -25,9 +26,9 @@ class MainContainerBehavior extends Behavior {
         container.first.string = "Adios!";
 //		Pins.invoke( "/led/write", { color: "red", value: 0} );
 		for (var i = 0 ; i < discoveredDevices.length; i++) {
-			discoveredDevices[i].invoke("/ledpir/write", { color: color, value: 0 }, function(result) {});
+			discoveredDevices[i].invoke("/led/write", { color: "red", value: 0 }, function(result) {});
 		}
-		Pins.invoke( "/ledpir/write", { color: "red", value: 0} );
+		Pins.invoke( "/led/write", { color: "red", value: 0} );
 	}
 	onSensorConfigured(container){
 		//Once the sensor has been configured, start reading from it.
