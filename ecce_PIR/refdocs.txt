@@ -1,0 +1,8 @@
+How to implement polling:
+  http://forum.kinoma.com/discussion/290/polling-server-every-x-seconds
+
+
+
+Basics:
+  Class notes: http://forum.kinoma.com/categories/uc-berkeley-cs160
+  Reference: http://kinoma.com/develop/documentation/javascript/
