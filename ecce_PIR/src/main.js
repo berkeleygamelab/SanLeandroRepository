@@ -1,7 +1,8 @@
 //@program
 var discoveredDevices = [];
 var wsPins="";
-
+var PIRs = {};
+ 
 Pins = require("pins");
 
 /* Skins & Styles */
@@ -17,33 +18,50 @@ class MainContainerBehavior extends Behavior {
 		container.first.string = "Hola!";
 //		Pins.invoke("/led/write", { color: "red", value: 1 } );
 		for (var i = 0 ; i < discoveredDevices.length; i++) {
-			discoveredDevices[i].invoke("/led/write", { color: "red", value: 1 }, function(result) {});
+			discoveredDevices[i].invoke("/led/write", { color: "red", value: 0 }, function(result) {});
+			discoveredDevices[i].invoke("/led/write", { color: "green", value: 0 }, function(result) {});
+			discoveredDevices[i].invoke("/led/write", { color: "blue", value: 0 }, function(result) {});
+
 		}
-		Pins.invoke("/led/write", { color: "red", value: 1} );
+		Pins.invoke("/led/write", { color: "red", value: 0} );
+		Pins.invoke("/led/write", { color: "green", value: 1} );
+		Pins.invoke("/led/write", { color: "blue", value: 1} );
 	}
-	nobody(container){
+	nobody(container) {
 		//When button clicked, change text
         let curString = container.first.string;
         container.first.string = "Adios!";
 //		Pins.invoke( "/led/write", { color: "red", value: 0} );
 		for (var i = 0 ; i < discoveredDevices.length; i++) {
-			discoveredDevices[i].invoke("/led/write", { color: "red", value: 0 }, function(result) {});
+			discoveredDevices[i].invoke("/led/write", { color: "red", value: 1 }, function(result) {});
+			discoveredDevices[i].invoke("/led/write", { color: "green", value: 1 }, function(result) {});
+			discoveredDevices[i].invoke("/led/write", { color: "blue", value: 1 }, function(result) {});
 		}
-		Pins.invoke( "/led/write", { color: "red", value: 0} );
+		Pins.invoke( "/led/write", { color: "red", value: 1} );
+		Pins.invoke("/led/write", { color: "green", value: 1} );
+		Pins.invoke("/led/write", { color: "blue", value: 1} );
 	}
-	onSensorConfigured(container){
+	onSensorConfigured(container) {
 		//Once the sensor has been configured, start reading from it.
-		Pins.repeat("/pir/wasPressed", 20, function(readResult){
-			if ( readResult == true ) {
-				application.distribute( "somebody" );
-				trace ("from /gotButtonResult: pin_hi "+readResult+"\n");
+		Pins.repeat("/pir/wasPressed", 20, 
+			function(readResult) {
+				if ( readResult == true ) {
+					application.distribute( "somebody" );
+					trace ("from /gotButtonResult: pin_hi " + readResult+"\n");
+				}
+				if ( readResult == false )	{
+					application.distribute( "nobody" );
+					trace ("from /gotButtonResult: pin_lo " + readResult+"\n");
+				}
 			}
-			if ( readResult == false )	{
-				application.distribute( "nobody" );
-				trace ("from /gotButtonResult: pin_lo "+readResult+"\n");
-			}
-		});
+		);
 	}
+	// Once a sensor is found in a discover instance this should add it to the model of current sensors and their latest data.
+	// 
+	sensorFound(container) {
+		
+	}
+
 }
 
 let MainContainer = Container.template($ => ({
@@ -96,16 +114,21 @@ application.behavior = Behavior({
 	onLaunch(application) {
 		var mainContainer = new MainContainer();
 		application.add( mainContainer );	
-		
+		application.shared = true;
+		      
 		Pins.discover(
 			function(connectionDesc) {
 				trace("Found: " + JSON.stringify(connectionDesc) + "\n");
 				if (connectionDesc.name == "tricolor-led") discoveredDevices[discoveredDevices.length] = Pins.connect(connectionDesc);
-			}, function(result) {
+			}, 
+			function(result) {
 				trace("Lost: "+JSON.stringify(result)+"\n");
 				let index = discoveredDevices.indexOf(result);
 				if (index >= 0) discoveredDevices.splice(index, 1);
 			}
 		);
+	},
+	onQuit(application) {
+	      application.shared = false;
 	}
 });
