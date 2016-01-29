@@ -6,3 +6,4 @@ How to implement polling:
 Basics:
   Class notes: http://forum.kinoma.com/categories/uc-berkeley-cs160
   Reference: http://kinoma.com/develop/documentation/javascript/
+  PWM controller: http://kinoma.com/develop/documentation/projects/sparkle-motion/
